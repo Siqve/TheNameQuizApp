@@ -1,6 +1,7 @@
 package com.example.adne.thenamequizapp.activities;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -19,7 +21,11 @@ import com.example.adne.thenamequizapp.QuizApplication;
 import com.example.adne.thenamequizapp.R;
 import com.example.adne.thenamequizapp.data.Person;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,6 +42,9 @@ public class AddActivity extends AppCompatActivity {
 
     private ImageView personImage;
     private EditText personName;
+
+    private static final int CAMERA = 0;
+    private static final int SELECT_GALLERY = 1;
 
 
     @Override
@@ -109,8 +118,33 @@ public class AddActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == -1)
-            updateImage(tempImage);
+        if (requestCode == CAMERA) {
+            if (resultCode == Activity.RESULT_OK)
+                updateImage(tempImage);
+            Log.i("bob123camera", tempImage.getPath());
+        } else if (requestCode == SELECT_GALLERY) {
+            Log.i("bob123",  "a: " + data.getData().toString());
+            if (resultCode == Activity.RESULT_OK) {
+                Log.i("bob123",  "asd");
+                DateFormat df = new SimpleDateFormat("ddMMyyyy_HH_mm_ss");
+                String pictureName = "picture_" + df.format(Calendar.getInstance().getTime());
+                File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                File image = new File(storageDir, pictureName + ".jpg");
+                try {
+                    image.createNewFile();
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
+                    FileOutputStream fos = new FileOutputStream(image);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                    fos.flush();
+                    fos.close();
+
+
+                    updateImage(tempImage = Uri.fromFile(image));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 
@@ -124,6 +158,21 @@ public class AddActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(calledFrom);
+            builder.setTitle(R.string.select_or_take)
+                    .setItems(R.array.picture_options, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == 0) {
+                                camera();
+                            } else if (which == 1) {
+                                selectGallery();
+                            }
+                        }
+                    });
+            builder.show();
+        }
+
+        private void camera() {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
             File imageFile = createImageFile();
@@ -131,7 +180,13 @@ public class AddActivity extends AppCompatActivity {
             calledFrom.tempImage = photoUri;
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
 
-            calledFrom.startActivityForResult(intent, 0);
+            calledFrom.startActivityForResult(intent, CAMERA);
+        }
+
+        private void selectGallery() {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            calledFrom.startActivityForResult(intent, SELECT_GALLERY);
         }
 
 

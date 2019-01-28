@@ -15,5 +15,8 @@
     <string name="preferences_file" translatable="false">pref</string>
     <string name="score">Score</string>
     <string name="guess_correct">Correct!</string>
-    <string name="guess_incorrect">Wrong guess!</string>
+    <string name="guess_incorrect">Wrong guess! It was: </string>
+    <string name="select_or_take">Select image or take new one</string>
+    <string name="camera">Camera</string>
+    <string name="select_image">Select existing image</string>
 </resources>

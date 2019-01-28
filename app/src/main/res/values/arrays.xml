@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="picture_options">
+        <item>@string/camera</item>
+        <item>@string/select_image</item>
+    </array>
+</resources>

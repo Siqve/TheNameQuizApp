@@ -91,28 +91,36 @@ public class QuizActivity extends AppCompatActivity {
         currentIndex++;
     }
 
-
+    /**
+     * Fired by the Guess button
+     */
     public void makeGuess(View view) {
         if (guessEditText.getText().length() == 0) {
             Toast.makeText(getApplicationContext(), getString(R.string.empty_name), Toast.LENGTH_SHORT).show();
             return;
         }
         String guess = guessEditText.getText().toString();
-        if (guess.equalsIgnoreCase(persons.get((currentIndex-1) % persons.size()).getName())) {
-            score++;
-            updateScore();
-            checkHighscore();
-            Toast.makeText(getApplicationContext(), getString(R.string.guess_correct), Toast.LENGTH_SHORT).show();
+        String correctName = persons.get((currentIndex-1) % persons.size()).getName();
+        if (guess.equalsIgnoreCase(correctName)) {
+            correctGuess();
         } else {
-            wrongGuess();
+            wrongGuess(correctName);
         }
+        updateScore();
+        guessEditText.setText("");
         nextPerson();
     }
 
-    public void wrongGuess() {
+
+    private void correctGuess() {
+        score++;
+        checkHighscore();
+        Toast.makeText(getApplicationContext(), getString(R.string.guess_correct), Toast.LENGTH_SHORT).show();
+    }
+
+    private void wrongGuess(String correctName) {
         score = 0;
-        updateScore();
-        Toast.makeText(getApplicationContext(), getString(R.string.guess_incorrect), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), getString(R.string.guess_incorrect) + correctName, Toast.LENGTH_LONG).show();
     }
 
     private void updateScore() {
