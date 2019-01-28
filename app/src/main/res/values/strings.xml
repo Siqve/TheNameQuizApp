@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">The Name Quiz App</string>
+    <string name="title_activity_database">DatabaseActivity</string>
+    <string name="appname" translatable="false">Tinder 2.0</string>
+    <string name="database">database</string>
+    <string name="quiz">quiz</string>
+    <string name="name">Name</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="empty_name">The name is empty!</string>
+    <string name="error_occured">An error occured!</string>
+    <string name="guess">Guess</string>
+    <string name="highscore">Highscore</string>
+    <string name="empty_database">The database is empty!</string>
+    <string name="preferences_file" translatable="false">pref</string>
+    <string name="score">Score</string>
+    <string name="guess_correct">Correct!</string>
+    <string name="guess_incorrect">Wrong guess!</string>
+</resources>
