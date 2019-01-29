@@ -21,10 +21,7 @@ import com.example.adne.thenamequizapp.QuizApplication;
 import com.example.adne.thenamequizapp.R;
 import com.example.adne.thenamequizapp.data.Person;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;

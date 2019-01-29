@@ -13,7 +13,7 @@ public class QuizApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        //Hei ådne
         Uri uri = Uri.parse("android.resource://com.example.adne.thenamequizapp/drawable/jone");
         persons.add(new Person("Jone", uri));
 
