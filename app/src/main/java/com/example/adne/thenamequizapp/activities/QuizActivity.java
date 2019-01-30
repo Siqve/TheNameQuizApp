@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,6 +26,7 @@ import java.util.List;
 
 public class QuizActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
     private ImageView pictureImageView;
     private EditText guessEditText;
     private TextView scoreTextView;
@@ -40,6 +43,11 @@ public class QuizActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         pictureImageView = findViewById(R.id.guessPictureImageView);
         guessEditText = findViewById(R.id.guessEditText);
@@ -65,8 +73,17 @@ public class QuizActivity extends AppCompatActivity {
             return;
         }
         score = 0;
+        updateScore();
         Collections.shuffle(persons);
         nextPerson();
+    }
+
+    private void stop() {
+        Toast.makeText(getApplicationContext(), getString(R.string.finished) + score + "/" + currentIndex, Toast.LENGTH_LONG)
+                .show();
+        checkHighscore();
+        currentIndex = 0;
+        start();
     }
 
     /**
@@ -74,21 +91,19 @@ public class QuizActivity extends AppCompatActivity {
      */
     private void nextPerson() {
         if (currentIndex >= persons.size()) {
-            currentIndex = 0;
-            Collections.shuffle(persons);
+            //Finished
+            stop();
+            return;
         }
-        Person tempPerson = persons.get(currentIndex);
+        Person tempPerson = persons.get(currentIndex++);
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), tempPerson.getImage());
             pictureImageView.setImageBitmap(bitmap);
         } catch (IOException e) {
-            e.printStackTrace();
             Log.e("TheNameQuizApp", "Failed to load image for person: " + tempPerson.getName());
-            currentIndex++;
+            e.printStackTrace();
             nextPerson();
-            return;
         }
-        currentIndex++;
     }
 
     /**
@@ -114,17 +129,16 @@ public class QuizActivity extends AppCompatActivity {
 
     private void correctGuess() {
         score++;
-        checkHighscore();
         Toast.makeText(getApplicationContext(), getString(R.string.guess_correct), Toast.LENGTH_SHORT).show();
     }
 
     private void wrongGuess(String correctName) {
-        score = 0;
         Toast.makeText(getApplicationContext(), getString(R.string.guess_incorrect) + correctName, Toast.LENGTH_LONG).show();
     }
 
     private void updateScore() {
-        String scoreText = getText(R.string.score) + ": " + score;
+        String scoreText = getText(R.string.score) + ": " + score + "/" + currentIndex;
+        toolbar.setTitle(scoreText);
         scoreTextView.setText(scoreText);
     }
 

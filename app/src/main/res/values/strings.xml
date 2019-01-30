@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">The Name Quiz App</string>
-    <string name="title_activity_database">DatabaseActivity</string>
-    <string name="appname" translatable="false">Tinder 2.0</string>
+    <string name="app_name">Tinder 2.0</string>
+    <string name="title_activity_quiz">Score 0/0</string>
+    <string name="title_activity_add">Add person</string>
+    <string name="title_activity_database">Person database</string>
     <string name="database">database</string>
     <string name="quiz">quiz</string>
     <string name="name">Name</string>
@@ -15,8 +16,9 @@
     <string name="preferences_file" translatable="false">pref</string>
     <string name="score">Score</string>
     <string name="guess_correct">Correct!</string>
-    <string name="guess_incorrect">Wrong guess! It was: </string>
+    <string name="guess_incorrect">Wrong guess! It was:\u0020</string>
     <string name="select_or_take">Select image or take new one</string>
     <string name="camera">Camera</string>
     <string name="select_image">Select existing image</string>
+    <string name="finished">You finished with the score:\u0020</string>
 </resources>

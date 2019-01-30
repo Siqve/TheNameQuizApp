@@ -11,7 +11,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -48,6 +48,10 @@ public class AddActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         quizApplication = ((QuizApplication) getApplication());
 
@@ -99,7 +103,6 @@ public class AddActivity extends AppCompatActivity {
             person.setName(personName.getText().toString());
         }
         person.setImage(tempImage);
-
         finish();
     }
 
@@ -118,11 +121,8 @@ public class AddActivity extends AppCompatActivity {
         if (requestCode == CAMERA) {
             if (resultCode == Activity.RESULT_OK)
                 updateImage(tempImage);
-            Log.i("bob123camera", tempImage.getPath());
         } else if (requestCode == SELECT_GALLERY) {
-            Log.i("bob123",  "a: " + data.getData().toString());
             if (resultCode == Activity.RESULT_OK) {
-                Log.i("bob123",  "asd");
                 DateFormat df = new SimpleDateFormat("ddMMyyyy_HH_mm_ss");
                 String pictureName = "picture_" + df.format(Calendar.getInstance().getTime());
                 File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -134,7 +134,6 @@ public class AddActivity extends AppCompatActivity {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                     fos.flush();
                     fos.close();
-
 
                     updateImage(tempImage = Uri.fromFile(image));
                 } catch (Exception e) {
@@ -188,7 +187,6 @@ public class AddActivity extends AppCompatActivity {
 
 
         private File createImageFile() {
-
             DateFormat df = new SimpleDateFormat("ddMMyyyy_HH_mm_ss");
             String pictureName = "picture_" + df.format(Calendar.getInstance().getTime());
             File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
