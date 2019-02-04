@@ -21,4 +21,8 @@
     <string name="camera">Camera</string>
     <string name="select_image">Select existing image</string>
     <string name="finished">You finished with the score:\u0020</string>
+    <string name="owner_name">Enter your name</string>
+    <string name="ok">Okay</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

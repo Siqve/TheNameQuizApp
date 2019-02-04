@@ -12,6 +12,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,10 +20,11 @@ import android.widget.Toast;
 
 import com.example.adne.thenamequizapp.QuizApplication;
 import com.example.adne.thenamequizapp.R;
+import com.example.adne.thenamequizapp.utilities.DatabaseUtil;
+import com.example.adne.thenamequizapp.utilities.FileUtil;
 import com.example.adne.thenamequizapp.data.Person;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -96,13 +98,15 @@ public class AddActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), getString(R.string.empty_name), Toast.LENGTH_SHORT).show();
             return;
         }
+        String name = personName.getText().toString();
         if (person == null) {
-            person = new Person(personName.getText().toString());
+            person = new Person(name);
             ((QuizApplication) getApplication()).getPersonList().add(person);
         } else {
-            person.setName(personName.getText().toString());
+            person.setName(name);
         }
         person.setImage(tempImage);
+        DatabaseUtil.getInstance().addPerson(getApplicationContext(), tempImage, name);
         finish();
     }
 
@@ -123,26 +127,30 @@ public class AddActivity extends AppCompatActivity {
                 updateImage(tempImage);
         } else if (requestCode == SELECT_GALLERY) {
             if (resultCode == Activity.RESULT_OK) {
-                DateFormat df = new SimpleDateFormat("ddMMyyyy_HH_mm_ss");
-                String pictureName = "picture_" + df.format(Calendar.getInstance().getTime());
-                File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                File image = new File(storageDir, pictureName + ".jpg");
+                File image = createImageFile();
                 try {
-                    image.createNewFile();
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
-                    FileOutputStream fos = new FileOutputStream(image);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                    fos.flush();
-                    fos.close();
+                    updateImage(tempImage = FileUtil.getInstance().saveImageFromBitmap(bitmap, image));
 
-                    updateImage(tempImage = Uri.fromFile(image));
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
     }
 
+    private File createImageFile() {
+        DateFormat df = new SimpleDateFormat("ddMMyyyy_HH_mm_ss");
+        String pictureName = "picture_" + df.format(Calendar.getInstance().getTime());
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = new File(storageDir, pictureName + ".jpg");
+        try {
+            image.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
 
     private class AddImageClick implements View.OnClickListener {
 
@@ -186,22 +194,7 @@ public class AddActivity extends AppCompatActivity {
         }
 
 
-        private File createImageFile() {
-            DateFormat df = new SimpleDateFormat("ddMMyyyy_HH_mm_ss");
-            String pictureName = "picture_" + df.format(Calendar.getInstance().getTime());
-            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            File image = null;
-            try {
-                image = File.createTempFile(
-                        pictureName,  /* prefix */
-                        ".jpg",         /* suffix */
-                        storageDir      /* directory */
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return image;
-        }
+
 
     }
 
