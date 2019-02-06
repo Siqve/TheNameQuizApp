@@ -149,4 +149,15 @@ public class QuizActivity extends AppCompatActivity {
         highscoreTextView.setText(highscoreText);
     }
 
+    public List<Person> getPersons() {
+        return persons;
+    }
+
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
+    public int getScore() {
+        return score;
+    }
 }

@@ -85,4 +85,7 @@ public class DatabaseActivity extends AppCompatActivity {
         return mListView;
     }
 
+    public List<Person> getPersons() {
+        return persons;
+    }
 }

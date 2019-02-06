@@ -52,8 +52,31 @@ public class DatabaseUtil {
         });
     }
 
+    public void deletePerson(final Context context, final Uri uri, final String name) {
+        StorageReference storageImageRef = storage.getReference().child("images/" + uri.getLastPathSegment());
+
+        // Register observers to listen for when the download is done or if it fails
+        storageImageRef.delete().addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("FirebaseImageDeleter", "Failed to delete image from URI: " + uri.getPath());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                deleteLocalPerson(context, uri.getLastPathSegment(), name);
+            }
+        });
+    }
+
     private void addLocalPerson(Context context, String fileName, String personName) {
         localPersonDatabase.add(fileName + SPLITTER + personName);
+        SharedPreferences preferences = context.getSharedPreferences(context.getString(R.string.preferences_file), Context.MODE_PRIVATE);
+        preferences.edit().putStringSet("persondatabase", localPersonDatabase).apply();
+    }
+
+    private void deleteLocalPerson(Context context, String fileName, String personName) {
+        localPersonDatabase.remove(fileName + SPLITTER + personName);
         SharedPreferences preferences = context.getSharedPreferences(context.getString(R.string.preferences_file), Context.MODE_PRIVATE);
         preferences.edit().putStringSet("persondatabase", localPersonDatabase).apply();
     }
@@ -67,6 +90,7 @@ public class DatabaseUtil {
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference firebaseImage = storage.getReference().child("images/" + imageName);
+
 
             File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
             final File localFile = new File(storageDir, firebaseImage.getName());

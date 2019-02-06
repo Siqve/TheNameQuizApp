@@ -74,7 +74,7 @@ public class AddActivity extends AppCompatActivity {
     private void fillData() {
         ((EditText) findViewById(R.id.editTextName)).setText(person.getName());
         if (person.hasImage())
-            updateImage(person.getImage());
+            updateImage(tempImage = person.getImage());
     }
 
     /**
@@ -101,12 +101,16 @@ public class AddActivity extends AppCompatActivity {
         String name = personName.getText().toString();
         if (person == null) {
             person = new Person(name);
-            ((QuizApplication) getApplication()).getPersonList().add(person);
+            quizApplication.getPersonList().add(person);
         } else {
             person.setName(name);
         }
-        person.setImage(tempImage);
-        DatabaseUtil.getInstance().addPerson(getApplicationContext(), tempImage, name);
+
+        //Person has set image
+        if (tempImage != null) {
+            person.setImage(tempImage);
+            DatabaseUtil.getInstance().addPerson(getApplicationContext(), tempImage, name);
+        }
         finish();
     }
 
@@ -114,8 +118,10 @@ public class AddActivity extends AppCompatActivity {
      * Delete button clicked. Deletes the person and finishes activity.
      */
     public void onDeleteEntry(View v) {
-        if (personIndex != -1)
+        if (personIndex != -1) {
             quizApplication.getPersonList().remove(personIndex);
+            DatabaseUtil.getInstance().deletePerson(getApplicationContext(), tempImage, personName.getText().toString());
+        }
         finish();
     }
 
